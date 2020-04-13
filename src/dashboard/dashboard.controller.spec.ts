@@ -3,7 +3,6 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { DashboardModule } from './dashboard.module';
 import { TemperatureService } from 'temperature/temperature.service';
 import { AppModule } from 'app.module';
 
@@ -17,7 +16,6 @@ describe('Dashboard Controller', () => {
         date: new Date(2019, 8, 10, 15, 32, 16),
         temperature: 32,
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
     const module = await Test.createTestingModule({
       imports: [AppModule],
@@ -52,10 +50,10 @@ describe('Dashboard Controller', () => {
 
         <body>
           <h1>Welcome to the Pool status page:</h1>
-          
+
           <p>The last value of the temperature sensor: 32℃ at
             2019-09-10T13:32:16.000Z </p>
-          
+
         </body>
 
         </html>

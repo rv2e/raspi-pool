@@ -16,7 +16,6 @@ describe('CustomLoggerService', () => {
       info: jest.fn(),
       verbose: jest.fn(),
       warn: jest.fn(),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
     customLogger = new CustomLoggerService(mockedLogger);
   });
