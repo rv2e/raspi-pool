@@ -68,7 +68,7 @@ Once docker and postgres are installed correctly,
 the image can be built then ran:
 
 ```sh
-  docker build raspi-pool .
+  docker build -t raspi-pool .
 
   docker run --rm --device /dev/mem --device /dev/gpiomem --cap-add SYS_RAWIO -it raspi-pool
 ```
