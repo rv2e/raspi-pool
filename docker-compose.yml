@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  api:
+    build:
+      target: dependencies
+      dockerfile: Dockerfile
+      context: .
+      args:
+        NPM_TOKEN: ${NPM_TOKEN}
+    command: npm run start:docker
+
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=pooluser
+      - DATABASE_PASSWORD=password
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: postgres:10.10-alpine
+    environment:
+      POSTGRES_USER: pooluser
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"

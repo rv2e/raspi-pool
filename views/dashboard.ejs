@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Raspi-pool</title>
+</head>
+
+<body>
+  <h1>Welcome to the Pool status page:</h1>
+  <% if (temperatureData !== undefined) { %>
+  <p>The last value of the temperature sensor: <%= temperatureData.temperature %>℃ at
+    <%= temperatureData.date.toISOString() %> </p>
+  <% } else { %>
+  <p>The temperature cannot be fetched!</p>
+  <% } %>
+</body>
+
+</html>
