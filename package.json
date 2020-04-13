@@ -52,6 +52,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
+    "@types/cron": "^1.7.2",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
     "eslint-config-prettier": "^6.10.1",

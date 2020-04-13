@@ -3,7 +3,8 @@ FROM arm32v6/node:12.16.2-alpine
 
 WORKDIR /usr/src/app
 
-COPY [package.json, yarn.lock] .
+COPY package.json .
+COPY yarn.lock .
 
 RUN yarn install
 
