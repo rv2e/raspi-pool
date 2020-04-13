@@ -6,6 +6,8 @@ WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
 
+RUN apk add --no-cache --virtual .gyp python make g++
+
 RUN yarn install --network-timeout 1000000
 
 COPY . .
