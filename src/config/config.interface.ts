@@ -7,4 +7,5 @@ export interface IConfig {
   port: number;
   release: string;
   sentryDSN?: string;
+  temperatureSensor: { model: number; pin: number };
 }

@@ -61,3 +61,14 @@
    - Build the app: `yarn build`
    - Generate migrations: `yarn db:migration:generate -n <migration_name>`
    - Seed the database: `yarn db:seed`
+
+## Raspberry
+
+Once docker and postgres are installed correctly,
+the image can be built then ran:
+
+```sh
+  docker build raspi-pool .
+
+  docker run --rm --device /dev/mem --device /dev/gpiomem --cap-add SYS_RAWIO -it raspi-pool
+```

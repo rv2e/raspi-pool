@@ -50,10 +50,10 @@ describe('Dashboard Controller', () => {
 
         <body>
           <h1>Welcome to the Pool status page:</h1>
-
+          
           <p>The last value of the temperature sensor: 32℃ at
             2019-09-10T13:32:16.000Z </p>
-
+          
         </body>
 
         </html>

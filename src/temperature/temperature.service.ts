@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
+import { promises as sensor } from 'node-dht-sensor';
 import { TemperatureEntity } from './temperature.entity';
+import { ConfigService } from 'config/config.service';
 
 @Injectable()
 export class TemperatureService {
@@ -12,11 +13,14 @@ export class TemperatureService {
   constructor(
     @InjectRepository(TemperatureEntity)
     private readonly temperatureRepository: Repository<TemperatureEntity>,
+    private readonly config: ConfigService,
   ) {}
 
   public getLastData() {
     return this.lastData;
   }
+
+  // public getLastWeekMetrics() {}
 
   public async takeTemperature() {
     const temperature = await this.getTemperature();
@@ -31,17 +35,22 @@ export class TemperatureService {
     return temperatureEntity;
   }
 
-  private async getTemperature() {
+  private async getTemperature(): Promise<number> {
     if (this.takingTemperature) {
       throw new Error(
         'Already taking the temperature. Concurrency is not allowed.',
       );
     }
+
     this.takingTemperature = true;
-    // TODO use lib to get the temperature
-    const temperature = 42;
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    this.takingTemperature = false;
-    return temperature;
+    try {
+      const { model, pin } = this.config.get('temperatureSensor');
+      const { temperature } = await sensor.read(model, pin);
+      this.takingTemperature = false;
+      return temperature;
+    } catch (error) {
+      this.takingTemperature = false;
+      throw new Error(`Failed to get the temperature: ${error.message}`);
+    }
   }
 }

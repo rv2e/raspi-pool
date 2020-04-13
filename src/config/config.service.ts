@@ -18,6 +18,7 @@ export class ConfigService {
       dotenv.parse(fs.readFileSync(filePath)),
     );
 
+    // TODO: Check config schema (using Joi for instance)
     this.envConfig = {
       appName: 'raspi-pool',
       database: {
@@ -36,6 +37,14 @@ export class ConfigService {
         ? parsedConfig.RELEASE
         : 'release-not-found',
       sentryDSN: parsedConfig.SENTRY_DSN,
+      temperatureSensor: {
+        model: parsedConfig.TEMPERATURE_SENSOR_MODEL
+          ? Number(parsedConfig.TEMPERATURE_SENSOR_MODEL)
+          : 22,
+        pin: parsedConfig.TEMPERATURE_SENSOR_PIN
+          ? Number(parsedConfig.TEMPERATURE_SENSOR_PIN)
+          : 2,
+      },
     };
 
     this.setupSentry();

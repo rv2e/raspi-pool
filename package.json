@@ -40,6 +40,7 @@
     "ejs": "3.0.1",
     "express": "4.17.1",
     "lodash": "4.17.15",
+    "node-dht-sensor": "^0.4.1",
     "pg": "7.18.2",
     "reflect-metadata": "0.1.13",
     "rpio": "^2.1.1",
