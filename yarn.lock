@@ -691,6 +691,13 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
+"@types/rpio@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@types/rpio/-/rpio-0.0.3.tgz#66a728959a2743f458ace66450b1831c02f4dd55"
+  integrity sha512-zHXqQeNHp/RcERC5dHzjHjmiM71B41HGqYX518XTf2ttRu4v/BXiP60WhuVbAHsGicG6IfL/z4joVl0zHh+Qeg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/serve-static@*":
   version "1.13.3"
   resolved "https://registry.yarnpkg.com/@types/serve-static/-/serve-static-1.13.3.tgz#eb7e1c41c4468272557e897e9171ded5e2ded9d1"
@@ -1420,7 +1427,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.0.0.tgz#23c0df14f6a88077f5f986c0d167ec03c3d5537c"
   integrity sha512-Phlt0plgpIIBOGTT/ehfFnbNlfsDEiqmzE2KRXoX1bLIlir4X/MR+zSyBEkL05ffWgnRSf/DXv+WrUAVr93/ow==
 
-bindings@^1.5.0:
+bindings@^1.5.0, bindings@~1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -4835,7 +4842,7 @@ mz@^2.4.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.12.1:
+nan@^2.12.1, nan@~2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
@@ -5912,6 +5919,14 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
+
+rpio@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/rpio/-/rpio-2.1.1.tgz#26a6f193b5bd449e26d4cae537cf6f730802e34e"
+  integrity sha512-0Pluzy3s77JXxpUVE3zs25TAYIjYb3q1yOJVkK6taH/idzDohZH6whqp5owgYeawxs767nc8y9TdbAv0Q1xL7w==
+  dependencies:
+    bindings "~1.5.0"
+    nan "~2.14.0"
 
 rsvp@^4.8.4:
   version "4.8.5"
