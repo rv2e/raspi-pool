@@ -70,5 +70,5 @@ the image can be built then ran:
 ```sh
   docker build -t raspi-pool .
 
-  nohup docker run --rm --device /dev/mem --device /dev/gpiomem --cap-add SYS_RAWIO -it raspi-pool &
+  nohup docker run --rm --device /dev/mem --device /dev/gpiomem --cap-add SYS_RAWIO -t raspi-pool &
 ```

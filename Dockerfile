@@ -19,4 +19,4 @@ RUN NODE_OPTIONS=--max_old_space_size=512 yarn build
 ENV PORT 3000
 EXPOSE 3000
 
-CMD ["bash", "-c", "yarn start:prod"]
+CMD ["sh", "-c", "yarn start:prod"]
