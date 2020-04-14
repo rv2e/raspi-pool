@@ -14,7 +14,7 @@ COPY . .
 
 RUN touch .env
 
-RUN yarn build
+RUN NODE_OPTIONS=--max_old_space_size=512 yarn build
 
 ENV PORT 3000
 EXPOSE 3000
