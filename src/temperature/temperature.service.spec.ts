@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { seed } from 'database/seed';
-import { EntityManager, getConnectionManager } from 'typeorm';
+import { EntityManager, getConnectionManager, Connection } from 'typeorm';
 import { promises as sensor } from 'node-dht-sensor';
 
 import { TemperatureEntity } from './temperature.entity';
@@ -9,6 +9,24 @@ import { TemperatureService } from './temperature.service';
 import { AppModule } from 'app.module';
 
 jest.mock('node-dht-sensor');
+
+const seedFixtures = async (connection: Connection) => {
+  const temperatures = connection.manager.create(TemperatureEntity, [
+    {
+      id: 1,
+      temperature: 25,
+    },
+    {
+      id: 2,
+      temperature: 29,
+    },
+    {
+      id: 3,
+      temperature: 22,
+    },
+  ] as Partial<TemperatureEntity>[]);
+  await connection.manager.save(temperatures);
+};
 
 describe('Temperature Service', () => {
   let app: INestApplication;
@@ -22,7 +40,7 @@ describe('Temperature Service', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await seed();
+    await seed(seedFixtures);
     temperatureService = app.get(TemperatureService);
 
     entityManager = getConnectionManager().get().manager;
@@ -34,17 +52,56 @@ describe('Temperature Service', () => {
     await app.close();
   });
 
-  describe('getLastData', () => {
-    it('returns the last temperature data', async () => {
-      await temperatureService.takeTemperature();
-      expect(temperatureService.getLastData()).toEqual({
-        date: expect.any(Date),
-        temperature: expect.any(Number),
-      });
+  describe('getLastWeekMetrics', () => {
+    it('returns all the temperatures of the last week', async () => {
+      await expect(entityManager.count(TemperatureEntity)).resolves.toBe(3);
+
+      // Force to have an old temperature
+      const today = new Date();
+      await entityManager
+        .createQueryBuilder(TemperatureEntity, 'temperature')
+        .where({ id: 1 })
+        .update({
+          createdAt: new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() - 7,
+          ),
+        })
+        .execute();
+
+      // Make sure the order is respected
+      await entityManager
+        .createQueryBuilder(TemperatureEntity, 'temperature')
+        .where({ id: 2 })
+        .update({
+          createdAt: new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 1,
+          ),
+        })
+        .execute();
+
+      await expect(temperatureService.getLastWeekMetrics()).resolves.toEqual([
+        expect.objectContaining({
+          createdAt: expect.any(Date),
+          temperature: 22,
+          id: 3,
+        }),
+        expect.objectContaining({
+          createdAt: expect.any(Date),
+          temperature: 29,
+          id: 2,
+        }),
+      ]);
     });
 
-    it('returns undefined when data are not there yet', async () => {
-      expect(temperatureService.getLastData()).toBeUndefined();
+    it('throws an error if something fails', async () => {
+      jest.spyOn(entityManager, 'find').mockRejectedValue(new Error('Fake'));
+      await expect(temperatureService.getLastWeekMetrics()).rejects.toThrow(
+        'Fake',
+      );
     });
   });
   describe('takeTemperature', () => {
@@ -53,7 +110,7 @@ describe('Temperature Service', () => {
       await expect(temperatureService.takeTemperature()).resolves.toEqual({
         createdAt: expect.any(Date),
         deletedAt: null,
-        id: 2,
+        id: 4,
         temperature: 42,
         updatedAt: expect.any(Date),
       });

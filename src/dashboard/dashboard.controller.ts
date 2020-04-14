@@ -13,7 +13,19 @@ export class DashboardController {
   @Get('/')
   @Render('dashboard')
   public async renderDashboard() {
-    const temperatureData = this.temperatureService.getLastData();
-    return { temperatureData };
+    const temperatureEntities = await this.temperatureService.getLastWeekMetrics();
+
+    return {
+      lastTemperature: temperatureEntities[0],
+      temperatureData: {
+        labels: temperatureEntities.map(
+          ({ createdAt }) =>
+            `${createdAt.toISOString().slice(8, 19).split('T').join('th at ')}`,
+        ),
+        datasets: temperatureEntities.map(({ temperature }) =>
+          temperature.toFixed(1),
+        ),
+      },
+    };
   }
 }

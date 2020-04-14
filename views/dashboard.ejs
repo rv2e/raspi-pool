@@ -3,17 +3,70 @@
 
 <head>
   <meta charset="utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
   <title>Raspi-pool</title>
 </head>
 
 <body>
   <h1>Welcome to the Pool status page:</h1>
-  <% if (temperatureData !== undefined) { %>
-  <p>The last value of the temperature sensor: <%= temperatureData.temperature %>℃ at
-    <%= temperatureData.date.toISOString() %> </p>
+  <% if (lastTemperature !== undefined) { %>
+    <p>The last value of the temperature sensor: <%= lastTemperature.temperature.toFixed(1) %>℃ at
+    <%= lastTemperature.createdAt.toLocaleString() %> </p>
   <% } else { %>
-  <p>The temperature cannot be fetched!</p>
+    <p>The temperature cannot be fetched!</p>
   <% } %>
+
+  <div style="width:75%;">
+    <canvas id="myChart"></canvas>
+    <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: <%- JSON.stringify(temperatureData.labels) %>,
+          datasets: [{
+            label: 'Temperature',
+            fill: false,
+            backgroundColor: 'rgb(255, 99, 132)',
+            broderColor: 'rgb(255, 99, 132)',
+            data: <%- JSON.stringify(temperatureData.datasets) %>,
+          }]
+        },
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Evolution of the temperature over the last week.'
+          },
+          tooltips: {
+            mode: 'index',
+            intersect: false,
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: true
+          },
+          scales: {
+            x: {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Date'
+              }
+            },
+            y: {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Degrees'
+              }
+            }
+          }
+        }
+      });
+    </script>
+  </div>
 </body>
 
 </html>

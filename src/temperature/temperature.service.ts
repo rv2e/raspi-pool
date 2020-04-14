@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Raw } from 'typeorm';
 import { promises as sensor } from 'node-dht-sensor';
 import { TemperatureEntity } from './temperature.entity';
 import { ConfigService } from 'config/config.service';
 
 @Injectable()
 export class TemperatureService {
-  private lastData: { date: Date; temperature: number } | undefined;
   private takingTemperature = false;
 
   constructor(
@@ -16,21 +15,22 @@ export class TemperatureService {
     private readonly config: ConfigService,
   ) {}
 
-  public getLastData() {
-    return this.lastData;
+  public async getLastWeekMetrics() {
+    return this.temperatureRepository.find({
+      where: {
+        createdAt: Raw(
+          alias => `${alias} > CURRENT_TIMESTAMP - INTERVAL '7 day'`,
+        ),
+      },
+      order: { createdAt: 'ASC' },
+    });
   }
-
-  // public getLastWeekMetrics() {}
 
   public async takeTemperature() {
     const temperature = await this.getTemperature();
     const temperatureEntity = await this.temperatureRepository.save({
       temperature,
     });
-    this.lastData = {
-      date: temperatureEntity.createdAt,
-      temperature: temperatureEntity.temperature,
-    };
 
     return temperatureEntity;
   }
