@@ -12,6 +12,7 @@ export class StatsService {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   public async takeTemperateStats() {
+    this.customLoggerService.log('Starting to take the temperature.');
     try {
       await this.temperatureService.takeTemperature();
     } catch (error) {
