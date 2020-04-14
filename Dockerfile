@@ -3,10 +3,10 @@ FROM arm32v6/node:12.16.2-alpine
 
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache --virtual .gyp python make g++
+
 COPY package.json .
 COPY yarn.lock .
-
-RUN apk add --no-cache --virtual .gyp python make g++
 
 RUN yarn install --network-timeout 1000000
 
