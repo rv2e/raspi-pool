@@ -68,7 +68,7 @@ Once docker and postgres are installed correctly,
 the image can be built then ran:
 
 ```sh
-  docker build -t raspi-pool .
+  nohup docker build -t raspi-pool . &
 
   nohup docker run --rm --device /dev/mem --device /dev/gpiomem -p 3000:3000 --cap-add SYS_RAWIO -t raspi-pool &
 ```
