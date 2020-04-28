@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Raw } from 'typeorm';
-import { promises as sensor } from 'node-dht-sensor';
+import sensor from 'node-dht-sensor';
 import { TemperatureEntity } from './temperature.entity';
 import { ConfigService } from 'config/config.service';
 
@@ -45,7 +45,23 @@ export class TemperatureService {
     this.takingTemperature = true;
     try {
       const { model, pin } = this.config.get('temperatureSensor');
-      const { temperature } = await sensor.read(model, pin);
+      const temperature = await new Promise<number>(async (resolve, reject) => {
+        const timeout = setTimeout(
+          () =>
+            reject(
+              new Error('Timeout has been reached to get the temperature.'),
+            ),
+          30 * 1000,
+        );
+
+        sensor.read(model, pin, (error, temperature) => {
+          clearTimeout(timeout);
+          if (error) {
+            return reject(error);
+          }
+          return resolve(temperature);
+        });
+      });
       this.takingTemperature = false;
       return temperature;
     } catch (error) {

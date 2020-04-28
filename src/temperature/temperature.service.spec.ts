@@ -2,13 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { seed } from 'database/seed';
 import { EntityManager, getConnectionManager, Connection } from 'typeorm';
-import { promises as sensor } from 'node-dht-sensor';
+import sensor from 'node-dht-sensor';
 
 import { TemperatureEntity } from './temperature.entity';
 import { TemperatureService } from './temperature.service';
 import { AppModule } from 'app.module';
 
-jest.mock('node-dht-sensor');
+jest.mock('node-dht-sensor', () => ({ read: jest.fn() }));
 
 const seedFixtures = async (connection: Connection) => {
   const temperatures = connection.manager.create(TemperatureEntity, [
@@ -34,6 +34,10 @@ describe('Temperature Service', () => {
   let entityManager: EntityManager;
 
   beforeEach(async () => {
+    (sensor.read as jest.Mock).mockImplementation((model, pin, cb) =>
+      cb(null, 42, 30),
+    );
+
     const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -115,7 +119,7 @@ describe('Temperature Service', () => {
         updatedAt: expect.any(Date),
       });
       expect(sensor.read).toHaveBeenCalledTimes(1);
-      expect(sensor.read).toHaveBeenCalledWith(11, 4);
+      expect(sensor.read).toHaveBeenCalledWith(11, 4, expect.any(Function));
     });
 
     it('stores the temperature into the database', async () => {
@@ -135,7 +139,9 @@ describe('Temperature Service', () => {
     });
 
     it('throws an error when the sensor fails to get the temperature', async () => {
-      (sensor.read as jest.Mock).mockRejectedValue(new Error('fake'));
+      (sensor.read as jest.Mock).mockImplementation((module, pin, cb) =>
+        cb(new Error('fake')),
+      );
       expect(sensor.read).not.toHaveBeenCalled();
       await expect(temperatureService.takeTemperature()).rejects.toThrow(
         'Failed to get the temperature: fake',

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
 
   <title>Raspi-pool</title>
 </head>
@@ -24,20 +24,20 @@
       var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: <%- JSON.stringify(temperatureData.labels) %>,
+          labels: <%- JSON.stringify(temperatureData.map(({ x }) => x)) %>,
           datasets: [{
-            label: 'Temperature',
+            label: 'Temperature over time',
             fill: false,
             backgroundColor: 'rgb(255, 99, 132)',
             broderColor: 'rgb(255, 99, 132)',
-            data: <%- JSON.stringify(temperatureData.datasets) %>,
+            data: <%- JSON.stringify(temperatureData) %>,
           }]
         },
         options: {
           responsive: true,
           title: {
             display: true,
-            text: 'Evolution of the temperature over the last week.'
+            text: 'Evolution of the temperature in degrees over the last week.'
           },
           tooltips: {
             mode: 'index',
@@ -49,6 +49,7 @@
           },
           scales: {
             x: {
+              type: 'time',
               display: true,
               scaleLabel: {
                 display: true,

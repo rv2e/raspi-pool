@@ -51,7 +51,7 @@ describe('Dashboard Controller', () => {
 
         <head>
           <meta charset=\\"utf-8\\" />
-          <script src=\\"https://cdn.jsdelivr.net/npm/chart.js@2.8.0\\"></script>
+          <script src=\\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js\\"></script>
 
           <title>Raspi-pool</title>
         </head>
@@ -60,7 +60,7 @@ describe('Dashboard Controller', () => {
           <h1>Welcome to the Pool status page:</h1>
           
             <p>The last value of the temperature sensor: 32.0℃ at
-            9/10/2019, 15:32:16 </p>
+            9/10/2020, 15:32:16 </p>
           
 
           <div style=\\"width:75%;\\">
@@ -70,20 +70,20 @@ describe('Dashboard Controller', () => {
               var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                  labels: [\\"10th at 13:32:16\\",\\"10th at 13:32:16\\"],
+                  labels: [\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],
                   datasets: [{
-                    label: 'Temperature',
+                    label: 'Temperature over time',
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     broderColor: 'rgb(255, 99, 132)',
-                    data: [\\"32.0\\",\\"32.0\\"],
+                    data: [{\\"x\\":\\"2019-09-10T13:32:16.000Z\\",\\"y\\":32},{\\"x\\":\\"2020-09-10T13:32:16.000Z\\",\\"y\\":32}],
                   }]
                 },
                 options: {
                   responsive: true,
                   title: {
                     display: true,
-                    text: 'Evolution of the temperature over the last week.'
+                    text: 'Evolution of the temperature in degrees over the last week.'
                   },
                   tooltips: {
                     mode: 'index',
@@ -95,6 +95,7 @@ describe('Dashboard Controller', () => {
                   },
                   scales: {
                     x: {
+                      type: 'time',
                       display: true,
                       scaleLabel: {
                         display: true,
