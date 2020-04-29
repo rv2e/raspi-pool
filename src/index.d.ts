@@ -17,4 +17,10 @@ declare module 'node-dht-sensor' {
   }
 }
 
-declare module 'ds18b20-raspi';
+declare module 'ds18b20-raspi' {
+  export function readC(
+    serial: string,
+    decimal: number,
+    cb: (error: Error | undefined, temperature: number) => void,
+  ): void;
+}

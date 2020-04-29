@@ -1,7 +1,8 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 
 import databaseConfig from './config';
-import { TemperatureEntity } from 'temperature/temperature.entity';
+import { OutsideTemperatureEntity } from 'temperature/outside-temperature.entity';
+import { WaterTemperatureEntity } from 'temperature/water-temperature.entity';
 
 const clean = async (connection: Connection) => {
   if (!connection.isConnected) {
@@ -12,15 +13,28 @@ const clean = async (connection: Connection) => {
 };
 
 const seedFixtures = async (connection: Connection) => {
-  const temperatures = connection.manager.create(TemperatureEntity, [
+  const outsideTemperatures = connection.manager.create(
+    OutsideTemperatureEntity,
+    [
+      {
+        createdAt: new Date(2019, 8, 10, 15, 32, 16),
+        id: 1,
+        temperature: 25,
+        updatedAt: new Date(2019, 8, 10, 15, 32, 16),
+      },
+    ] as Partial<OutsideTemperatureEntity>[],
+  );
+  const waterTemperatures = connection.manager.create(WaterTemperatureEntity, [
     {
       createdAt: new Date(2019, 8, 10, 15, 32, 16),
       id: 1,
-      temperature: 25,
+      temperature: 28,
       updatedAt: new Date(2019, 8, 10, 15, 32, 16),
     },
-  ] as Partial<TemperatureEntity>[]);
-  await connection.manager.save(temperatures);
+  ] as Partial<OutsideTemperatureEntity>[]);
+
+  await connection.manager.save(outsideTemperatures);
+  await connection.manager.save(waterTemperatures);
 };
 
 export const seed = async (fixtures = seedFixtures) => {

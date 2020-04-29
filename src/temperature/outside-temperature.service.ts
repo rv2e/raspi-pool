@@ -2,16 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Raw } from 'typeorm';
 import sensor from 'node-dht-sensor';
-import { TemperatureEntity } from './temperature.entity';
+import { OutsideTemperatureEntity } from './outside-temperature.entity';
 import { ConfigService } from 'config/config.service';
 
 @Injectable()
-export class TemperatureService {
+export class OutsideTemperatureService {
   private takingTemperature = false;
 
   constructor(
-    @InjectRepository(TemperatureEntity)
-    private readonly temperatureRepository: Repository<TemperatureEntity>,
+    @InjectRepository(OutsideTemperatureEntity)
+    private readonly temperatureRepository: Repository<
+      OutsideTemperatureEntity
+    >,
     private readonly config: ConfigService,
   ) {}
 
@@ -28,28 +30,30 @@ export class TemperatureService {
 
   public async takeTemperature() {
     const temperature = await this.getTemperature();
-    const temperatureEntity = await this.temperatureRepository.save({
+    const OutsideTemperatureEntity = await this.temperatureRepository.save({
       temperature,
     });
 
-    return temperatureEntity;
+    return OutsideTemperatureEntity;
   }
 
   private async getTemperature(): Promise<number> {
     if (this.takingTemperature) {
       throw new Error(
-        'Already taking the temperature. Concurrency is not allowed.',
+        'Already taking the outside temperature. Concurrency is not allowed.',
       );
     }
 
     this.takingTemperature = true;
     try {
-      const { model, pin } = this.config.get('temperatureSensor');
+      const { model, pin } = this.config.get('outsideTemperatureSensor');
       const temperature = await new Promise<number>(async (resolve, reject) => {
         const timeout = setTimeout(
           () =>
             reject(
-              new Error('Timeout has been reached to get the temperature.'),
+              new Error(
+                'Timeout has been reached to get the outside temperature.',
+              ),
             ),
           30 * 1000,
         );
@@ -66,7 +70,9 @@ export class TemperatureService {
       return temperature;
     } catch (error) {
       this.takingTemperature = false;
-      throw new Error(`Failed to get the temperature: ${error.message}`);
+      throw new Error(
+        `Failed to get the outside temperature: ${error.message}`,
+      );
     }
   }
 }

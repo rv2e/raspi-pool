@@ -4,14 +4,14 @@ import { seed } from 'database/seed';
 import { EntityManager, getConnectionManager, Connection } from 'typeorm';
 import sensor from 'node-dht-sensor';
 
-import { TemperatureEntity } from './temperature.entity';
-import { TemperatureService } from './temperature.service';
+import { OutsideTemperatureEntity } from './outside-temperature.entity';
+import { OutsideTemperatureService } from './outside-temperature.service';
 import { AppModule } from 'app.module';
 
 jest.mock('node-dht-sensor', () => ({ read: jest.fn() }));
 
 const seedFixtures = async (connection: Connection) => {
-  const temperatures = connection.manager.create(TemperatureEntity, [
+  const temperatures = connection.manager.create(OutsideTemperatureEntity, [
     {
       id: 1,
       temperature: 25,
@@ -24,13 +24,13 @@ const seedFixtures = async (connection: Connection) => {
       id: 3,
       temperature: 22,
     },
-  ] as Partial<TemperatureEntity>[]);
+  ] as Partial<OutsideTemperatureEntity>[]);
   await connection.manager.save(temperatures);
 };
 
-describe('Temperature Service', () => {
+describe('Outside Temperature Service', () => {
   let app: INestApplication;
-  let temperatureService: TemperatureService;
+  let outsideTemperatureService: OutsideTemperatureService;
   let entityManager: EntityManager;
 
   beforeEach(async () => {
@@ -45,7 +45,7 @@ describe('Temperature Service', () => {
     app = module.createNestApplication();
     await app.init();
     await seed(seedFixtures);
-    temperatureService = app.get(TemperatureService);
+    outsideTemperatureService = app.get(OutsideTemperatureService);
 
     entityManager = getConnectionManager().get().manager;
   });
@@ -58,13 +58,16 @@ describe('Temperature Service', () => {
 
   describe('getLastWeekMetrics', () => {
     it('returns all the temperatures of the last week', async () => {
-      await expect(entityManager.count(TemperatureEntity)).resolves.toBe(3);
+      await expect(entityManager.count(OutsideTemperatureEntity)).resolves.toBe(
+        3,
+      );
 
       // Force to have an old temperature
       const today = new Date();
       await entityManager
-        .createQueryBuilder(TemperatureEntity, 'temperature')
-        .where({ id: 1 })
+        .getRepository(OutsideTemperatureEntity)
+        .createQueryBuilder('outsideTemperature')
+        .where('"outside-temperature".id = 1')
         .update({
           createdAt: new Date(
             today.getFullYear(),
@@ -76,8 +79,9 @@ describe('Temperature Service', () => {
 
       // Make sure the order is respected
       await entityManager
-        .createQueryBuilder(TemperatureEntity, 'temperature')
-        .where({ id: 2 })
+        .getRepository(OutsideTemperatureEntity)
+        .createQueryBuilder('outsideTemperature')
+        .where('"outside-temperature".id = 2')
         .update({
           createdAt: new Date(
             today.getFullYear(),
@@ -87,7 +91,9 @@ describe('Temperature Service', () => {
         })
         .execute();
 
-      await expect(temperatureService.getLastWeekMetrics()).resolves.toEqual([
+      await expect(
+        outsideTemperatureService.getLastWeekMetrics(),
+      ).resolves.toEqual([
         expect.objectContaining({
           createdAt: expect.any(Date),
           temperature: 22,
@@ -103,15 +109,17 @@ describe('Temperature Service', () => {
 
     it('throws an error if something fails', async () => {
       jest.spyOn(entityManager, 'find').mockRejectedValue(new Error('Fake'));
-      await expect(temperatureService.getLastWeekMetrics()).rejects.toThrow(
-        'Fake',
-      );
+      await expect(
+        outsideTemperatureService.getLastWeekMetrics(),
+      ).rejects.toThrow('Fake');
     });
   });
   describe('takeTemperature', () => {
     it('returns the temperature entity', async () => {
       expect(sensor.read).not.toHaveBeenCalled();
-      await expect(temperatureService.takeTemperature()).resolves.toEqual({
+      await expect(
+        outsideTemperatureService.takeTemperature(),
+      ).resolves.toEqual({
         createdAt: expect.any(Date),
         deletedAt: null,
         id: 4,
@@ -123,17 +131,19 @@ describe('Temperature Service', () => {
     });
 
     it('stores the temperature into the database', async () => {
-      const countEntities = await entityManager.count(TemperatureEntity);
-      await expect(temperatureService.takeTemperature()).resolves.toBeDefined();
-      await expect(entityManager.count(TemperatureEntity)).resolves.toBe(
+      const countEntities = await entityManager.count(OutsideTemperatureEntity);
+      await expect(
+        outsideTemperatureService.takeTemperature(),
+      ).resolves.toBeDefined();
+      await expect(entityManager.count(OutsideTemperatureEntity)).resolves.toBe(
         countEntities + 1,
       );
     });
 
     it('throws an error when multiple access are done on the sensor', async () => {
-      const temperaturePromise = temperatureService.takeTemperature();
-      await expect(temperatureService.takeTemperature()).rejects.toThrow(
-        'Already taking the temperature',
+      const temperaturePromise = outsideTemperatureService.takeTemperature();
+      await expect(outsideTemperatureService.takeTemperature()).rejects.toThrow(
+        'Already taking the outside temperature',
       );
       await expect(temperaturePromise).resolves.toBeDefined();
     });
@@ -143,8 +153,8 @@ describe('Temperature Service', () => {
         cb(new Error('fake')),
       );
       expect(sensor.read).not.toHaveBeenCalled();
-      await expect(temperatureService.takeTemperature()).rejects.toThrow(
-        'Failed to get the temperature: fake',
+      await expect(outsideTemperatureService.takeTemperature()).rejects.toThrow(
+        'Failed to get the outside temperature: fake',
       );
       expect(sensor.read).toHaveBeenCalledTimes(1);
     });

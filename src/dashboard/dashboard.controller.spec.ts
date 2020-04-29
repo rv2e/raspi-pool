@@ -3,15 +3,15 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { TemperatureService } from 'temperature/temperature.service';
+import { OutsideTemperatureService } from 'temperature/outside-temperature.service';
 import { AppModule } from 'app.module';
 
 describe('Dashboard Controller', () => {
   let app: NestExpressApplication;
-  let temperatureService: jest.Mock<TemperatureService>;
+  let outsideTemperatureService: jest.Mock<OutsideTemperatureService>;
 
   beforeEach(async () => {
-    temperatureService = {
+    outsideTemperatureService = {
       getLastWeekMetrics: jest.fn().mockResolvedValue([
         {
           createdAt: new Date(2019, 8, 10, 15, 32, 16),
@@ -26,8 +26,8 @@ describe('Dashboard Controller', () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(TemperatureService)
-      .useValue(temperatureService)
+      .overrideProvider(OutsideTemperatureService)
+      .useValue(outsideTemperatureService)
       .compile();
 
     app = module.createNestApplication();

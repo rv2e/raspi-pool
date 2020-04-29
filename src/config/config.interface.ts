@@ -6,6 +6,7 @@ export interface IConfig {
   environment: string;
   port: number;
   release: string;
+  outsideTemperatureSensor: { model: number; pin: number };
+  waterTemperatureSensor: { deviceSerial: string };
   sentryDSN?: string;
-  temperatureSensor: { model: number; pin: number };
 }
