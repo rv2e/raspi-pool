@@ -7,18 +7,29 @@ import { OutsideTemperatureService } from './outside-temperature.service';
 import { ConfigModule } from 'config/config.module';
 import { WaterTemperatureService } from './water-temperature.service';
 import { WaterTemperatureEntity } from './water-temperature.entity';
+import { BoxTemperatureService } from './box-temperature.service';
+import { BoxTemperatureEntity } from './box-temperature.entity';
 
 @Module({
   controllers: [],
-  exports: [OutsideTemperatureService, WaterTemperatureService],
+  exports: [
+    OutsideTemperatureService,
+    WaterTemperatureService,
+    BoxTemperatureService,
+  ],
   imports: [
     TypeOrmModule.forFeature([
       OutsideTemperatureEntity,
+      BoxTemperatureEntity,
       WaterTemperatureEntity,
     ]),
     CustomLoggerModule,
     ConfigModule,
   ],
-  providers: [OutsideTemperatureService, WaterTemperatureService],
+  providers: [
+    OutsideTemperatureService,
+    WaterTemperatureService,
+    BoxTemperatureService,
+  ],
 })
 export class TemperatureModule {}

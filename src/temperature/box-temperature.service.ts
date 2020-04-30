@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Raw } from 'typeorm';
-import { OutsideTemperatureEntity } from './outside-temperature.entity';
+import sensor from 'node-dht-sensor';
+import { BoxTemperatureEntity } from './box-temperature.entity';
 import { ConfigService } from 'config/config.service';
-import sensor from 'ds18b20-raspi';
 
 @Injectable()
-export class OutsideTemperatureService {
+export class BoxTemperatureService {
   private takingTemperature = false;
 
   constructor(
-    @InjectRepository(OutsideTemperatureEntity)
-    private readonly temperatureRepository: Repository<
-      OutsideTemperatureEntity
-    >,
+    @InjectRepository(BoxTemperatureEntity)
+    private readonly temperatureRepository: Repository<BoxTemperatureEntity>,
     private readonly config: ConfigService,
   ) {}
 
@@ -30,35 +28,33 @@ export class OutsideTemperatureService {
 
   public async takeTemperature() {
     const temperature = await this.getTemperature();
-    const OutsideTemperatureEntity = await this.temperatureRepository.save({
+    const BoxTemperatureEntity = await this.temperatureRepository.save({
       temperature,
     });
 
-    return OutsideTemperatureEntity;
+    return BoxTemperatureEntity;
   }
 
   private async getTemperature(): Promise<number> {
     if (this.takingTemperature) {
       throw new Error(
-        'Already taking the outside temperature. Concurrency is not allowed.',
+        'Already taking the box temperature. Concurrency is not allowed.',
       );
     }
 
     this.takingTemperature = true;
     try {
-      const { deviceSerial } = this.config.get('outsideTemperatureSensor');
+      const { model, pin } = this.config.get('boxTemperatureSensor');
       const temperature = await new Promise<number>(async (resolve, reject) => {
         const timeout = setTimeout(
           () =>
             reject(
-              new Error(
-                'Timeout has been reached to get the outside temperature.',
-              ),
+              new Error('Timeout has been reached to get the box temperature.'),
             ),
           30 * 1000,
         );
 
-        sensor.readC(deviceSerial, 2, (error, temperature) => {
+        sensor.read(model, pin, (error, temperature) => {
           clearTimeout(timeout);
           if (error) {
             return reject(error);
@@ -70,9 +66,7 @@ export class OutsideTemperatureService {
       return temperature;
     } catch (error) {
       this.takingTemperature = false;
-      throw new Error(
-        `Failed to get the outside temperature: ${error.message}`,
-      );
+      throw new Error(`Failed to get the box temperature: ${error.message}`);
     }
   }
 }

@@ -3,6 +3,7 @@ import { StatsService } from './stats.service';
 import { OutsideTemperatureService } from 'temperature/outside-temperature.service';
 import { CustomLoggerService } from 'logger/logger.service';
 import { WaterTemperatureService } from 'temperature/water-temperature.service';
+import { BoxTemperatureService } from 'temperature/box-temperature.service';
 
 jest.mock('@nestjs/schedule', () => ({
   Cron: jest.fn(() => jest.fn()),
@@ -14,6 +15,7 @@ jest.mock('@nestjs/schedule', () => ({
 describe('Stats Service', () => {
   let outsideTemperatureService: jest.Mocked<OutsideTemperatureService>;
   let waterTemperatureService: jest.Mocked<WaterTemperatureService>;
+  let boxTemperatureService: jest.Mocked<BoxTemperatureService>;
   let loggerService: jest.Mocked<CustomLoggerService>;
   let statsService: StatsService;
 
@@ -30,10 +32,15 @@ describe('Stats Service', () => {
       takeTemperature: jest.fn().mockResolvedValue({ temperature: 5 }),
     } as any;
 
+    boxTemperatureService = {
+      takeTemperature: jest.fn().mockResolvedValue({ temperature: 9 }),
+    } as any;
+
     statsService = new StatsService(
       loggerService,
       outsideTemperatureService,
       waterTemperatureService,
+      boxTemperatureService,
     );
   });
 
@@ -110,6 +117,44 @@ describe('Stats Service', () => {
       expect((Cron as jest.Mock).mock.results[1].value).toHaveBeenCalledWith(
         {},
         'takeWaterTemperateStats',
+        expect.anything(),
+      );
+    });
+  });
+
+  describe('takeBoxTemperateStats', () => {
+    it('takes the temperature', async () => {
+      expect(boxTemperatureService.takeTemperature).not.toHaveBeenCalled();
+      await expect(
+        statsService.takeBoxTemperateStats(),
+      ).resolves.toBeUndefined();
+      expect(boxTemperatureService.takeTemperature).toHaveBeenCalledTimes(1);
+      expect(boxTemperatureService.takeTemperature).toHaveBeenCalledWith();
+    });
+
+    it('forwards the error', async () => {
+      boxTemperatureService.takeTemperature.mockRejectedValue(
+        new Error('fake'),
+      );
+      expect(loggerService.error).not.toHaveBeenCalled();
+      await expect(
+        statsService.takeBoxTemperateStats(),
+      ).resolves.toBeUndefined();
+      expect(loggerService.error).toHaveBeenCalledTimes(1);
+      expect(loggerService.error).toHaveBeenCalledWith(new Error('fake'));
+    });
+
+    it('sets a cron job for every 10 minutes', async () => {
+      expect(Cron).toHaveBeenCalled();
+      expect((Cron as jest.Mock).mock.calls[2]).toEqual([
+        CronExpression.EVERY_10_MINUTES,
+      ]);
+      expect((Cron as jest.Mock).mock.results[2].value).toHaveBeenCalledTimes(
+        1,
+      );
+      expect((Cron as jest.Mock).mock.results[2].value).toHaveBeenCalledWith(
+        {},
+        'takeBoxTemperateStats',
         expect.anything(),
       );
     });

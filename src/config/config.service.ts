@@ -37,12 +37,15 @@ export class ConfigService {
         ? parsedConfig.RELEASE
         : 'release-not-found',
       sentryDSN: parsedConfig.SENTRY_DSN,
-      outsideTemperatureSensor: {
-        model: Number(parsedConfig.OUTSIDE_TEMPERATURE_SENSOR_MODEL),
-        pin: Number(parsedConfig.OUTSIDE_TEMPERATURE_SENSOR_PIN),
+      boxTemperatureSensor: {
+        model: Number(parsedConfig.BOX_TEMPERATURE_SENSOR_MODEL),
+        pin: Number(parsedConfig.BOX_TEMPERATURE_SENSOR_PIN),
       },
       waterTemperatureSensor: {
         deviceSerial: parsedConfig.WATER_TEMPERATURE_DEVICE_SERIAL,
+      },
+      outsideTemperatureSensor: {
+        deviceSerial: parsedConfig.OUTSIDE_TEMPERATURE_DEVICE_SERIAL,
       },
     };
 

@@ -2,13 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { seed } from 'database/seed';
 import { EntityManager, getConnectionManager, Connection } from 'typeorm';
-import sensor from 'node-dht-sensor';
+import sensor from 'ds18b20-raspi';
 
 import { OutsideTemperatureEntity } from './outside-temperature.entity';
 import { OutsideTemperatureService } from './outside-temperature.service';
 import { AppModule } from 'app.module';
 
-jest.mock('node-dht-sensor', () => ({ read: jest.fn() }));
+jest.mock('ds18b20-raspi', () => ({ readC: jest.fn() }));
 
 const seedFixtures = async (connection: Connection) => {
   const temperatures = connection.manager.create(OutsideTemperatureEntity, [
@@ -34,8 +34,8 @@ describe('Outside Temperature Service', () => {
   let entityManager: EntityManager;
 
   beforeEach(async () => {
-    (sensor.read as jest.Mock).mockImplementation((model, pin, cb) =>
-      cb(null, 42, 30),
+    (sensor.readC as jest.Mock).mockImplementation((serial, decimals, cb) =>
+      cb(null, 42),
     );
 
     const module = await Test.createTestingModule({
@@ -65,8 +65,7 @@ describe('Outside Temperature Service', () => {
       // Force to have an old temperature
       const today = new Date();
       await entityManager
-        .getRepository(OutsideTemperatureEntity)
-        .createQueryBuilder('outsideTemperature')
+        .createQueryBuilder(OutsideTemperatureEntity, 'outside-temperature')
         .where('"outside-temperature".id = 1')
         .update({
           createdAt: new Date(
@@ -79,8 +78,7 @@ describe('Outside Temperature Service', () => {
 
       // Make sure the order is respected
       await entityManager
-        .getRepository(OutsideTemperatureEntity)
-        .createQueryBuilder('outsideTemperature')
+        .createQueryBuilder(OutsideTemperatureEntity, 'outside-temperature')
         .where('"outside-temperature".id = 2')
         .update({
           createdAt: new Date(
@@ -116,7 +114,7 @@ describe('Outside Temperature Service', () => {
   });
   describe('takeTemperature', () => {
     it('returns the temperature entity', async () => {
-      expect(sensor.read).not.toHaveBeenCalled();
+      expect(sensor.readC).not.toHaveBeenCalled();
       await expect(
         outsideTemperatureService.takeTemperature(),
       ).resolves.toEqual({
@@ -126,8 +124,12 @@ describe('Outside Temperature Service', () => {
         temperature: 42,
         updatedAt: expect.any(Date),
       });
-      expect(sensor.read).toHaveBeenCalledTimes(1);
-      expect(sensor.read).toHaveBeenCalledWith(11, 4, expect.any(Function));
+      expect(sensor.readC).toHaveBeenCalledTimes(1);
+      expect(sensor.readC).toHaveBeenCalledWith(
+        '55-xxxxxxx',
+        2,
+        expect.any(Function),
+      );
     });
 
     it('stores the temperature into the database', async () => {
@@ -149,14 +151,14 @@ describe('Outside Temperature Service', () => {
     });
 
     it('throws an error when the sensor fails to get the temperature', async () => {
-      (sensor.read as jest.Mock).mockImplementation((module, pin, cb) =>
+      (sensor.readC as jest.Mock).mockImplementation((serial, decimals, cb) =>
         cb(new Error('fake')),
       );
-      expect(sensor.read).not.toHaveBeenCalled();
+      expect(sensor.readC).not.toHaveBeenCalled();
       await expect(outsideTemperatureService.takeTemperature()).rejects.toThrow(
         'Failed to get the outside temperature: fake',
       );
-      expect(sensor.read).toHaveBeenCalledTimes(1);
+      expect(sensor.readC).toHaveBeenCalledTimes(1);
     });
   });
 });
