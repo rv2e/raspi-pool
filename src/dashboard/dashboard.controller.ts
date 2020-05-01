@@ -1,27 +1,81 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Render,
+  Put,
+  Response,
+  Body,
+  NotImplementedException,
+} from '@nestjs/common';
 import { CustomLoggerService } from 'logger/logger.service';
 import _ from 'lodash';
 import { OutsideTemperatureService } from 'temperature/outside-temperature.service';
 import { WaterTemperatureService } from 'temperature/water-temperature.service';
 import { BoxTemperatureService } from 'temperature/box-temperature.service';
+import { LightService } from 'light/light.service';
+import { MotorService } from 'motors/motor.service';
+import { PutSensorDto } from './dashboard.dto';
+import { VerticalActuatorService } from 'vertical-actuator/vertical-actuator.service';
 
-@Controller('/status')
+@Controller('/')
 export class DashboardController {
   constructor(
     private readonly customLoggerService: CustomLoggerService,
     private readonly outsideTemperatureService: OutsideTemperatureService,
     private readonly waterTemperatureService: WaterTemperatureService,
     private readonly boxTemperatureService: BoxTemperatureService,
+    private readonly lightService: LightService,
+    private readonly motorService: MotorService,
+    private readonly verticalActuatorService: VerticalActuatorService,
   ) {}
 
-  @Get('/')
+  @Put('/api/sensor')
+  public async updateSensor(@Body() body: PutSensorDto) {
+    switch (body.id) {
+      case 'pool-light':
+        return body.checked
+          ? this.lightService.on('pool')
+          : this.lightService.off('pool');
+      case 'tree-light':
+        return body.checked
+          ? this.lightService.on('tree')
+          : this.lightService.off('tree');
+      case 'water-motor':
+        return body.checked
+          ? this.motorService.on('water')
+          : this.motorService.off('water');
+      case 'heating-motor':
+        return body.checked
+          ? this.motorService.on('heating')
+          : this.motorService.off('heating');
+      case 'actuator-up':
+        return this.verticalActuatorService.up();
+      case 'actuator-down':
+        return this.verticalActuatorService.down();
+      case 'actuator-stop':
+        return this.verticalActuatorService.stop();
+      default:
+        throw new NotImplementedException("The sensor doesn't exist.");
+    }
+  }
+
+  @Get('/status')
   @Render('dashboard')
   public async renderDashboard() {
     const outsideTemperatureEntities = await this.outsideTemperatureService.getLastWeekMetrics();
     const waterTemperatureEntities = await this.waterTemperatureService.getLastWeekMetrics();
     const boxTemperatureEntities = await this.boxTemperatureService.getLastWeekMetrics();
-
+    const motorStatus = {
+      heating: this.motorService.read('heating'),
+      water: this.motorService.read('water'),
+    };
+    const lightStatus = {
+      pool: this.lightService.read('pool'),
+      tree: this.lightService.read('tree'),
+    };
     return {
+      lightStatus,
+      motorStatus,
       lastBoxTemperature: boxTemperatureEntities.slice(-1)[0],
       lastWaterTemperature: waterTemperatureEntities.slice(-1)[0],
       lastOutsideTemperature: outsideTemperatureEntities.slice(-1)[0],

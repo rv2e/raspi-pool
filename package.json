@@ -36,7 +36,7 @@
     "@sentry/node": "5.15.0",
     "@types/superagent": "4.1.7",
     "class-transformer": "0.2.3",
-    "class-validator": "0.11.1",
+    "class-validator": "^0.12.2",
     "dotenv": "8.2.0",
     "ds18b20-raspi": "^0.3.4",
     "ejs": "3.0.1",

@@ -11,6 +11,7 @@ import { TemperatureModule } from 'temperature/temperature.module';
 import { CronModule } from 'cron/cron.module';
 import { VerticalActuatorModule } from 'vertical-actuator/vertical-actuator.module';
 import { LightModule } from 'light/light.module';
+import { MotorModule } from 'motors/motor.module';
 
 @Module({
   controllers: [MetaController],
@@ -21,6 +22,7 @@ import { LightModule } from 'light/light.module';
     DashboardModule,
     TemperatureModule,
     LightModule,
+    MotorModule,
     VerticalActuatorModule,
     ConfigModule,
     CustomLoggerModule,

@@ -3,36 +3,36 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from 'config/config.service';
 import { CustomLoggerService } from 'logger/logger.service';
 
-export type Light = 'pool' | 'tree';
+export type Motor = 'heating' | 'water';
 
 @Injectable()
-export class LightService {
-  private readonly lights: { [key in Light]: number };
+export class MotorService {
+  private readonly motors: { [key in Motor]: number };
 
   constructor(
     private readonly logger: CustomLoggerService,
     private readonly config: ConfigService,
   ) {
-    this.lights = {
-      pool: this.config.get('poolLight'),
-      tree: this.config.get('treeLight'),
+    this.motors = {
+      heating: this.config.get('heatingPump'),
+      water: this.config.get('waterPump'),
     };
   }
 
-  public read(light: Light) {
+  public read(motor: Motor) {
     try {
-      return rpio.read(this.lights[light]);
+      return rpio.read(this.motors[motor]);
     } catch (error) {
       return 0;
     }
   }
 
-  public on(light: Light) {
-    this.high(this.lights[light]);
+  public on(motor: Motor) {
+    this.high(this.motors[motor]);
   }
 
-  public off(light: Light) {
-    this.low(this.lights[light]);
+  public off(motor: Motor) {
+    this.low(this.motors[motor]);
   }
 
   private high(pin: number) {

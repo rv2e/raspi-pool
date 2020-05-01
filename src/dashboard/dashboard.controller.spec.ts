@@ -51,71 +51,101 @@ describe('Dashboard Controller', () => {
 
         <head>
           <meta charset=\\"utf-8\\" />
-          <script src=\\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js\\"></script>
-
+          <script src=\\"https://polyfill.io/v3/polyfill.min.js?features=Array.from,Promise,Symbol,Object.setPrototypeOf,Object.getOwnPropertySymbols\\"></script>
+          <script src=\\"https://cdn.jsdelivr.net/npm/superagent\\"></script>
+          <script src=\\"https://cdn.plot.ly/plotly-latest.min.js\\" charset=\\"utf-8\\"></script>
+          <link rel=\\"stylesheet\\" href=\\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\\" integrity=\\"sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh\\" crossorigin=\\"anonymous\\">
+          <script src=\\"https://code.jquery.com/jquery-3.4.1.slim.min.js\\" integrity=\\"sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n\\" crossorigin=\\"anonymous\\"></script>
+          <script src=\\"https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js\\" integrity=\\"sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo\\" crossorigin=\\"anonymous\\"></script>
+          <script src=\\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js\\" integrity=\\"sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6\\" crossorigin=\\"anonymous\\"></script>
+          <link href=\\"https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css\\" rel=\\"stylesheet\\">
+          <script src=\\"https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js\\"></script>
           <title>Raspi-pool</title>
         </head>
 
-        <body>
-          <h1>Welcome to the Pool status page:</h1>
-          
-            <p>The last value of the temperature sensor: 32.0℃ at
-            9/10/2020, 15:32:16 </p>
-          
+        <body class=\\"container\\">
+          <h1 class=\\"text-center\\">Welcome to the Pool status page</h1>
 
-          <div style=\\"width:75%;\\">
-            <canvas id=\\"myChart\\"></canvas>
-            <script>
-              var ctx = document.getElementById('myChart').getContext('2d');
-              var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                  labels: [\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],
-                  datasets: [{
-                    label: 'Temperature over time',
-                    fill: false,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    broderColor: 'rgb(255, 99, 132)',
-                    data: [{\\"x\\":\\"2019-09-10T13:32:16.000Z\\",\\"y\\":32},{\\"x\\":\\"2020-09-10T13:32:16.000Z\\",\\"y\\":32}],
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  title: {
-                    display: true,
-                    text: 'Evolution of the temperature in degrees over the last week.'
-                  },
-                  tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                  },
-                  hover: {
-                    mode: 'nearest',
-                    intersect: true
-                  },
-                  scales: {
-                    x: {
-                      type: 'time',
-                      display: true,
-                      scaleLabel: {
-                        display: true,
-                        labelString: 'Date'
-                      }
-                    },
-                    y: {
-                      display: true,
-                      scaleLabel: {
-                        display: true,
-                        labelString: 'Degrees'
-                      }
-                    }
-                  }
-                }
-              });
-            </script>
+          <div class=\\"row m-3 text-center\\">
+            <div class=\\"col-sm-4\\">
+              <div class=\\"card\\">
+                <div class=\\"card-body\\">
+                  <h5 class=\\"card-title\\">Light Controller</h5>
+                  <p class=\\"card-text\\">Puts the lights on and off.</p>
+                    <div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('pool-light')\\" id=\\"pool-light\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Pool on\\" data-off=\\"Pool off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('tree-light')\\" id=\\"tree-light\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Tree on\\" data-off=\\"Tree off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class=\\"col-sm-4\\">
+              <div class=\\"card\\">
+                <div class=\\"card-body\\">
+                  <h5 class=\\"card-title\\">Actuator Controller</h5>
+                  <p class=\\"card-text\\">Open and close the bench.</p>
+                    <div>
+                      <button onclick=\\"updateSensor('actuator-up')\\" id=\\"actuator-up\\" type=\\"button\\" class=\\"btn btn-info\\">Up</button>
+                      <button onclick=\\"updateSensor('actuator-down')\\" id=\\"actuator-down\\" type=\\"button\\" class=\\"btn btn-info\\">Down</button>
+                      <br/>
+                      <button onclick=\\"updateSensor('actuator-stop')\\" id=\\"actuator-stop\\" type=\\"button\\" class=\\"btn btn-danger m-1\\">Stop</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class=\\"col-sm-4\\">
+              <div class=\\"card\\">
+                <div class=\\"card-body\\">
+                  <h5 class=\\"card-title\\">Pump Controller</h5>
+                  <p class=\\"card-text\\">Start and stop the pumps.</p>
+                    <div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('water-motor')\\" id=\\"water-motor\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Water on\\" data-off=\\"Water off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('heating-motor')\\" id=\\"heating-motor\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Heating on\\" data-off=\\"Heating off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                    </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </body>
 
+          <p>
+            
+              The temperature cannot be fetched!
+            
+            <br/>
+            
+              The last value of the outside temperature sensor: 32.0℃
+              (9/10/2020, 15:32:16).
+            
+            <br/>
+            
+              The last value of the box temperature sensor: 22.0℃
+              (5/2/2020, 00:58:38).
+            
+          </p>
+
+          <div id=\\"myChart\\"></div>
+          <script>
+            var layout = {
+              title: 'Evolution of temperatures in degrees over the last week',
+              font: { size: 16 }
+            };
+            Plotly.newPlot('myChart', [{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Outside Temperature\\",\\"line\\":{\\"color\\":\\"red\\"},\\"x\\":[\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],\\"y\\":[32,32]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Box Temperature\\",\\"line\\":{\\"color\\":\\"orange\\"},\\"x\\":[\\"2020-05-01T22:58:38.952Z\\",\\"2020-05-01T22:58:38.952Z\\",\\"2020-05-01T22:58:38.952Z\\"],\\"y\\":[25,29,22]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Water Temperature\\",\\"line\\":{\\"color\\":\\"black\\"},\\"x\\":[],\\"y\\":[]}], layout, { responsive: true });
+          </script>
+
+          <script>
+            function updateSensor(id) {
+              var target = document.getElementById(id);
+              superagent
+                .put('/api/sensor')
+                .send({ id, checked: target.checked })
+                .end(function (error, res) {
+                  if (error) {
+                    window.alert(error);
+                  }
+                });
+            }
+          </script>
+        </body>
         </html>
         "
       `);

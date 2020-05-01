@@ -2,11 +2,11 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from 'app.module';
 import { Test } from '@nestjs/testing';
 import rpio from 'rpio';
-import { LightService } from './light.service';
+import { MotorService } from './motor.service';
 
 jest.mock('rpio');
-describe('LightService', () => {
-  let lightService: LightService;
+describe('MotorService', () => {
+  let motorService: MotorService;
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -16,7 +16,7 @@ describe('LightService', () => {
     }).compile();
 
     app = module.createNestApplication();
-    lightService = app.get(LightService);
+    motorService = app.get(MotorService);
   });
 
   afterEach(async () => {
@@ -24,34 +24,33 @@ describe('LightService', () => {
     await app.close();
   });
 
-  it('sets the light on', () => {
+  it('sets the motor on', () => {
     expect(rpio.open).not.toHaveBeenCalled();
-    expect(lightService.on('tree')).toBeUndefined();
+    expect(motorService.on('heating')).toBeUndefined();
     expect(rpio.open).toHaveBeenCalledTimes(1);
-    expect(rpio.open).toHaveBeenCalledWith(14, 1, 1);
+    expect(rpio.open).toHaveBeenCalledWith(29, 1, 1);
   });
 
-  it('sets the light off', () => {
+  it('sets the motor off', () => {
     expect(rpio.open).not.toHaveBeenCalled();
-    expect(lightService.off('tree')).toBeUndefined();
+    expect(motorService.off('heating')).toBeUndefined();
     expect(rpio.open).toHaveBeenCalledTimes(1);
-    expect(rpio.open).toHaveBeenCalledWith(14, 1, 0);
+    expect(rpio.open).toHaveBeenCalledWith(29, 1, 0);
   });
 
-  it('reads the light', () => {
+  it('reads the motor', () => {
     expect(rpio.read).not.toHaveBeenCalled();
-    expect(lightService.read('tree')).toEqual(1);
+    expect(motorService.read('heating')).toEqual(1);
     expect(rpio.read).toHaveBeenCalledTimes(1);
-    expect(rpio.read).toHaveBeenCalledWith(14);
+    expect(rpio.read).toHaveBeenCalledWith(29);
   });
-
-  it('returns 0 when reading the light fails', () => {
+  it('returns 0 when reading the motor fails', () => {
     (rpio.read as jest.Mock).mockImplementation(() => {
       throw new Error('FAKE');
     });
     expect(rpio.read).not.toHaveBeenCalled();
-    expect(lightService.read('tree')).toEqual(0);
+    expect(motorService.read('heating')).toEqual(0);
     expect(rpio.read).toHaveBeenCalledTimes(1);
-    expect(rpio.read).toHaveBeenCalledWith(14);
+    expect(rpio.read).toHaveBeenCalledWith(29);
   });
 });
