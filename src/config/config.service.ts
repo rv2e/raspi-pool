@@ -47,6 +47,14 @@ export class ConfigService {
       outsideTemperatureSensor: {
         deviceSerial: parsedConfig.OUTSIDE_TEMPERATURE_DEVICE_SERIAL,
       },
+      verticalActuators: [
+        parsedConfig.VERTICAL_ACTUATOR_1.split(',').map(Number),
+        parsedConfig.VERTICAL_ACTUATOR_2.split(',').map(Number),
+      ],
+      poolLight: Number(parsedConfig.POOL_LIGHT),
+      treeLight: Number(parsedConfig.TREE_LIGHT),
+      waterPump: Number(parsedConfig.WATER_PUMP),
+      heatingPump: Number(parsedConfig.HEATING_PUMP),
     };
 
     this.setupSentry();

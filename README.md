@@ -72,3 +72,19 @@ the image can be built then ran:
 
   nohup docker run --rm --device /dev/mem --device /dev/gpiomem -p 3000:3000 --cap-add SYS_RAWIO -t raspi-pool &
 ```
+
+## GPIO
+
+- BCM 4: water temperature (1-wire protocol - ds18b20) with 4.7k Ohm.
+- BCM 26: outside temperature (1-wire protocol - ds18b20) with 4.7k Ohm.
+- BCM 22: box temperature (am2320) with 10k Ohm.
+- Pin 29 & 31: vertical actuator 1
+- Pin 33 & 35: vertical actuator 2
+- Pin 32: pool light
+- Pin 38: tree light
+- Pin 40: water pump
+- Pin 27: heating pump
+
+### Useful Resources
+
+- https://pinout.xyz/pinout/pin11_gpio17

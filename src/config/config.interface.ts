@@ -9,5 +9,10 @@ export interface IConfig {
   boxTemperatureSensor: { model: number; pin: number };
   waterTemperatureSensor: { deviceSerial: string };
   outsideTemperatureSensor: { deviceSerial: string };
+  verticalActuators: number[][];
+  poolLight: number;
+  treeLight: number;
+  waterPump: number;
+  heatingPump: number;
   sentryDSN?: string;
 }

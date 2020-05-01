@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CustomLoggerModule } from 'logger/logger.module';
-import { VerticalActuatorService } from './vertical-actuator.service';
 import { ConfigModule } from 'config/config.module';
+import { LightService } from './light.service';
 
 @Module({
-  exports: [VerticalActuatorService],
+  exports: [LightService],
   imports: [CustomLoggerModule, ConfigModule],
-  providers: [VerticalActuatorService],
+  providers: [LightService],
 })
-export class VerticalActuatorModule {}
+export class LightModule {}

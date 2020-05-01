@@ -9,6 +9,8 @@ import { MetaController } from './meta/meta.controller';
 import { DashboardModule } from 'dashboard/dashboard.module';
 import { TemperatureModule } from 'temperature/temperature.module';
 import { CronModule } from 'cron/cron.module';
+import { VerticalActuatorModule } from 'vertical-actuator/vertical-actuator.module';
+import { LightModule } from 'light/light.module';
 
 @Module({
   controllers: [MetaController],
@@ -18,6 +20,8 @@ import { CronModule } from 'cron/cron.module';
     CronModule,
     DashboardModule,
     TemperatureModule,
+    LightModule,
+    VerticalActuatorModule,
     ConfigModule,
     CustomLoggerModule,
   ],
