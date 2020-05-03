@@ -44,7 +44,9 @@ export class WaterTemperatureService {
 
     this.takingTemperature = true;
     try {
-      const { deviceSerial } = this.config.get('waterTemperatureSensor');
+      const { deviceSerial, w1Directory } = this.config.get(
+        'waterTemperatureSensor',
+      );
       const temperature = await new Promise<number>(async (resolve, reject) => {
         const timeout = setTimeout(
           () =>
@@ -56,6 +58,7 @@ export class WaterTemperatureService {
           30 * 1000,
         );
 
+        sensor.setW1Directory(w1Directory);
         sensor.readC(deviceSerial, 2, (error, temperature) => {
           clearTimeout(timeout);
           if (error) {

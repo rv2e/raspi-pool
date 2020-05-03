@@ -8,7 +8,10 @@ import { OutsideTemperatureEntity } from './outside-temperature.entity';
 import { OutsideTemperatureService } from './outside-temperature.service';
 import { AppModule } from 'app.module';
 
-jest.mock('ds18b20-raspi', () => ({ readC: jest.fn() }));
+jest.mock('ds18b20-raspi', () => ({
+  readC: jest.fn(),
+  setW1Directory: jest.fn(),
+}));
 
 const seedFixtures = async (connection: Connection) => {
   const temperatures = connection.manager.create(OutsideTemperatureEntity, [
@@ -114,6 +117,7 @@ describe('Outside Temperature Service', () => {
   });
   describe('takeTemperature', () => {
     it('returns the temperature entity', async () => {
+      expect(sensor.setW1Directory).not.toHaveBeenCalled();
       expect(sensor.readC).not.toHaveBeenCalled();
       await expect(
         outsideTemperatureService.takeTemperature(),
@@ -124,6 +128,10 @@ describe('Outside Temperature Service', () => {
         temperature: 42,
         updatedAt: expect.any(Date),
       });
+      expect(sensor.setW1Directory).toHaveBeenCalledTimes(1);
+      expect(sensor.setW1Directory).toHaveBeenCalledWith(
+        '/sys/bus/w1/devices/w1_bus_master1',
+      );
       expect(sensor.readC).toHaveBeenCalledTimes(1);
       expect(sensor.readC).toHaveBeenCalledWith(
         '55-xxxxxxx',

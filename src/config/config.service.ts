@@ -43,9 +43,11 @@ export class ConfigService {
       },
       waterTemperatureSensor: {
         deviceSerial: parsedConfig.WATER_TEMPERATURE_DEVICE_SERIAL,
+        w1Directory: parsedConfig.WATER_TEMPERATURE_W1_DIRECTORY,
       },
       outsideTemperatureSensor: {
         deviceSerial: parsedConfig.OUTSIDE_TEMPERATURE_DEVICE_SERIAL,
+        w1Directory: parsedConfig.OUTSIDE_TEMPERATURE_W1_DIRECTORY,
       },
       verticalActuators: [
         parsedConfig.VERTICAL_ACTUATOR_1.split(',').map(Number),

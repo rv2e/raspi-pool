@@ -23,4 +23,5 @@ declare module 'ds18b20-raspi' {
     decimal: number,
     cb: (error: Error | undefined, temperature: number) => void,
   ): void;
+  export function setW1Directory(path: string): void;
 }

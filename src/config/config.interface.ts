@@ -7,8 +7,8 @@ export interface IConfig {
   port: number;
   release: string;
   boxTemperatureSensor: { model: number; pin: number };
-  waterTemperatureSensor: { deviceSerial: string };
-  outsideTemperatureSensor: { deviceSerial: string };
+  waterTemperatureSensor: { deviceSerial: string; w1Directory: string };
+  outsideTemperatureSensor: { deviceSerial: string; w1Directory: string };
   verticalActuators: number[][];
   poolLight: number;
   treeLight: number;

@@ -5,10 +5,14 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { OutsideTemperatureService } from 'temperature/outside-temperature.service';
 import { AppModule } from 'app.module';
+import { WaterTemperatureService } from 'temperature/water-temperature.service';
+import { BoxTemperatureService } from 'temperature/box-temperature.service';
 
 describe('Dashboard Controller', () => {
   let app: NestExpressApplication;
   let outsideTemperatureService: jest.Mock<OutsideTemperatureService>;
+  let waterTemperatureService: jest.Mock<WaterTemperatureService>;
+  let boxTemperatureService: jest.Mock<BoxTemperatureService>;
 
   beforeEach(async () => {
     outsideTemperatureService = {
@@ -23,11 +27,39 @@ describe('Dashboard Controller', () => {
         },
       ]),
     } as any;
+    boxTemperatureService = {
+      getLastWeekMetrics: jest.fn().mockResolvedValue([
+        {
+          createdAt: new Date(2019, 8, 10, 15, 32, 16),
+          temperature: 39,
+        },
+        {
+          createdAt: new Date(2020, 8, 10, 15, 32, 16),
+          temperature: 32,
+        },
+      ]),
+    } as any;
+    waterTemperatureService = {
+      getLastWeekMetrics: jest.fn().mockResolvedValue([
+        {
+          createdAt: new Date(2019, 8, 10, 15, 32, 16),
+          temperature: 13,
+        },
+        {
+          createdAt: new Date(2020, 8, 10, 15, 32, 16),
+          temperature: 18,
+        },
+      ]),
+    } as any;
     const module = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(OutsideTemperatureService)
       .useValue(outsideTemperatureService)
+      .overrideProvider(WaterTemperatureService)
+      .useValue(waterTemperatureService)
+      .overrideProvider(BoxTemperatureService)
+      .useValue(boxTemperatureService)
       .compile();
 
     app = module.createNestApplication();
@@ -109,7 +141,8 @@ describe('Dashboard Controller', () => {
 
           <p>
             
-              The temperature cannot be fetched!
+              The last value of the water temperature sensor: 18.0℃
+              (9/10/2020, 15:32:16).
             
             <br/>
             
@@ -118,8 +151,8 @@ describe('Dashboard Controller', () => {
             
             <br/>
             
-              The last value of the box temperature sensor: 22.0℃
-              (5/2/2020, 00:58:38).
+              The last value of the box temperature sensor: 32.0℃
+              (9/10/2020, 15:32:16).
             
           </p>
 
@@ -129,7 +162,7 @@ describe('Dashboard Controller', () => {
               title: 'Evolution of temperatures in degrees over the last week',
               font: { size: 16 }
             };
-            Plotly.newPlot('myChart', [{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Outside Temperature\\",\\"line\\":{\\"color\\":\\"red\\"},\\"x\\":[\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],\\"y\\":[32,32]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Box Temperature\\",\\"line\\":{\\"color\\":\\"orange\\"},\\"x\\":[\\"2020-05-01T22:58:38.952Z\\",\\"2020-05-01T22:58:38.952Z\\",\\"2020-05-01T22:58:38.952Z\\"],\\"y\\":[25,29,22]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Water Temperature\\",\\"line\\":{\\"color\\":\\"black\\"},\\"x\\":[],\\"y\\":[]}], layout, { responsive: true });
+            Plotly.newPlot('myChart', [{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Outside Temperature\\",\\"line\\":{\\"color\\":\\"red\\"},\\"x\\":[\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],\\"y\\":[32,32]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Box Temperature\\",\\"line\\":{\\"color\\":\\"orange\\"},\\"x\\":[\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],\\"y\\":[39,32]},{\\"type\\":\\"scatter\\",\\"mode\\":\\"lines\\",\\"name\\":\\"Water Temperature\\",\\"line\\":{\\"color\\":\\"black\\"},\\"x\\":[\\"2019-09-10T13:32:16.000Z\\",\\"2020-09-10T13:32:16.000Z\\"],\\"y\\":[13,18]}], layout, { responsive: true });
           </script>
 
           <script>
