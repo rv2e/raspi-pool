@@ -1,5 +1,7 @@
 # raspi-pool
 
+Raspi-pool is a swimming pool manager service to control devices (lights, water & heating pump, ...). It's also using sensors to get some data (e.g. temperate of the water).
+
 ## ⚡️ Quick start
 
 1. **Clone and enter the repo.**
