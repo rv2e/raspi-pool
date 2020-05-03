@@ -3,12 +3,10 @@ import {
   Get,
   Render,
   Put,
-  Response,
   Body,
   NotImplementedException,
 } from '@nestjs/common';
 import { CustomLoggerService } from 'logger/logger.service';
-import _ from 'lodash';
 import { OutsideTemperatureService } from 'temperature/outside-temperature.service';
 import { WaterTemperatureService } from 'temperature/water-temperature.service';
 import { BoxTemperatureService } from 'temperature/box-temperature.service';
