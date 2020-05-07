@@ -1,4 +1,4 @@
-import rpio from 'rpio';
+import { Gpio } from 'onoff';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from 'config/config.service';
 import { CustomLoggerService } from 'logger/logger.service';
@@ -35,10 +35,10 @@ export class VerticalActuatorService {
   }
 
   private high(pin: number) {
-    rpio.open(pin, rpio.OUTPUT, rpio.HIGH);
+    new Gpio(pin, 'high');
   }
 
   private low(pin: number) {
-    rpio.open(pin, rpio.OUTPUT, rpio.LOW);
+    new Gpio(pin, 'low');
   }
 }

@@ -2,9 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from 'app.module';
 import { Test } from '@nestjs/testing';
 import { VerticalActuatorService } from 'vertical-actuator/vertical-actuator.service';
-import rpio from 'rpio';
+import { Gpio } from 'onoff';
 
-jest.mock('rpio');
+jest.mock('onoff');
 describe('VerticalActuatorService', () => {
   let verticalActuatorService: VerticalActuatorService;
   let app: INestApplication;
@@ -24,31 +24,31 @@ describe('VerticalActuatorService', () => {
   });
 
   it('goes up', () => {
-    expect(rpio.open).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(verticalActuatorService.up()).toBeUndefined();
-    expect(rpio.open).toHaveBeenCalledTimes(4);
-    expect(rpio.open).toHaveBeenCalledWith(3, 1, 0);
-    expect(rpio.open).toHaveBeenCalledWith(5, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(6, 1, 0);
-    expect(rpio.open).toHaveBeenCalledWith(9, 1, 1);
+    expect(Gpio).toHaveBeenCalledTimes(4);
+    expect(Gpio).toHaveBeenCalledWith(3, 'low');
+    expect(Gpio).toHaveBeenCalledWith(5, 'high');
+    expect(Gpio).toHaveBeenCalledWith(6, 'low');
+    expect(Gpio).toHaveBeenCalledWith(9, 'high');
   });
 
   it('goes down', () => {
-    expect(rpio.open).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(verticalActuatorService.down()).toBeUndefined();
-    expect(rpio.open).toHaveBeenCalledTimes(4);
-    expect(rpio.open).toHaveBeenCalledWith(3, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(5, 1, 0);
-    expect(rpio.open).toHaveBeenCalledWith(6, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(9, 1, 0);
+    expect(Gpio).toHaveBeenCalledTimes(4);
+    expect(Gpio).toHaveBeenCalledWith(3, 'high');
+    expect(Gpio).toHaveBeenCalledWith(5, 'low');
+    expect(Gpio).toHaveBeenCalledWith(6, 'high');
+    expect(Gpio).toHaveBeenCalledWith(9, 'low');
   });
   it('goes pause', () => {
-    expect(rpio.open).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(verticalActuatorService.stop()).toBeUndefined();
-    expect(rpio.open).toHaveBeenCalledTimes(4);
-    expect(rpio.open).toHaveBeenCalledWith(3, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(5, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(6, 1, 1);
-    expect(rpio.open).toHaveBeenCalledWith(9, 1, 1);
+    expect(Gpio).toHaveBeenCalledTimes(4);
+    expect(Gpio).toHaveBeenCalledWith(3, 'high');
+    expect(Gpio).toHaveBeenCalledWith(5, 'high');
+    expect(Gpio).toHaveBeenCalledWith(6, 'high');
+    expect(Gpio).toHaveBeenCalledWith(9, 'high');
   });
 });

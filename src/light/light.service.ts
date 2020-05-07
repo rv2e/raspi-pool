@@ -1,4 +1,4 @@
-import rpio from 'rpio';
+import { Gpio } from 'onoff';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from 'config/config.service';
 import { CustomLoggerService } from 'logger/logger.service';
@@ -21,7 +21,8 @@ export class LightService {
 
   public read(light: Light) {
     try {
-      return rpio.read(this.lights[light]);
+      const gpio = new Gpio(this.lights[light], 'in');
+      return gpio.readSync();
     } catch (error) {
       return 0;
     }
@@ -36,10 +37,10 @@ export class LightService {
   }
 
   private high(pin: number) {
-    rpio.open(pin, rpio.OUTPUT, rpio.HIGH);
+    new Gpio(pin, 'high');
   }
 
   private low(pin: number) {
-    rpio.open(pin, rpio.OUTPUT, rpio.LOW);
+    new Gpio(pin, 'low');
   }
 }

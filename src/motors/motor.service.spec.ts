@@ -1,16 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from 'app.module';
 import { Test } from '@nestjs/testing';
-import rpio from 'rpio';
+import { Gpio } from 'onoff';
 import { MotorService } from './motor.service';
 
-jest.mock('rpio');
+jest.mock('onoff');
 describe('MotorService', () => {
   let motorService: MotorService;
   let app: INestApplication;
 
   beforeEach(async () => {
-    (rpio.read as jest.Mock).mockReturnValue(1);
     const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -25,32 +24,46 @@ describe('MotorService', () => {
   });
 
   it('sets the motor on', () => {
-    expect(rpio.open).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(motorService.on('heating')).toBeUndefined();
-    expect(rpio.open).toHaveBeenCalledTimes(1);
-    expect(rpio.open).toHaveBeenCalledWith(29, 1, 1);
+    expect(Gpio).toHaveBeenCalledTimes(1);
+    expect(Gpio).toHaveBeenCalledWith(29, 'high');
   });
 
   it('sets the motor off', () => {
-    expect(rpio.open).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(motorService.off('heating')).toBeUndefined();
-    expect(rpio.open).toHaveBeenCalledTimes(1);
-    expect(rpio.open).toHaveBeenCalledWith(29, 1, 0);
+    expect(Gpio).toHaveBeenCalledTimes(1);
+    expect(Gpio).toHaveBeenCalledWith(29, 'low');
   });
 
   it('reads the motor', () => {
-    expect(rpio.read).not.toHaveBeenCalled();
+    (Gpio.prototype.readSync as jest.Mock<any>).mockReturnValue(1);
+    expect(Gpio).not.toHaveBeenCalled();
     expect(motorService.read('heating')).toEqual(1);
-    expect(rpio.read).toHaveBeenCalledTimes(1);
-    expect(rpio.read).toHaveBeenCalledWith(29);
+    expect(Gpio).toHaveBeenCalledTimes(1);
+    expect(Gpio).toHaveBeenCalledWith(29, 'in');
+    expect(
+      (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
+    ).toHaveBeenCalledWith();
   });
+
   it('returns 0 when reading the motor fails', () => {
-    (rpio.read as jest.Mock).mockImplementation(() => {
+    (Gpio.prototype.readSync as jest.Mock<any>).mockImplementation(() => {
       throw new Error('FAKE');
     });
-    expect(rpio.read).not.toHaveBeenCalled();
+    expect(Gpio).not.toHaveBeenCalled();
     expect(motorService.read('heating')).toEqual(0);
-    expect(rpio.read).toHaveBeenCalledTimes(1);
-    expect(rpio.read).toHaveBeenCalledWith(29);
+    expect(Gpio).toHaveBeenCalledTimes(1);
+    expect(Gpio).toHaveBeenCalledWith(29, 'in');
+    expect(
+      (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
+    ).toHaveBeenCalledWith();
   });
 });
