@@ -21,7 +21,8 @@ export class MotorService {
 
   public read(motor: Motor) {
     try {
-      const gpio = new Gpio(this.motors[motor], 'in');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gpio = new Gpio(this.motors[motor], '' as any);
       return gpio.readSync();
     } catch (error) {
       return 0;

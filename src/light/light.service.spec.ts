@@ -42,7 +42,7 @@ describe('LightService', () => {
     expect(Gpio).not.toHaveBeenCalled();
     expect(lightService.read('tree')).toEqual(1);
     expect(Gpio).toHaveBeenCalledTimes(1);
-    expect(Gpio).toHaveBeenCalledWith(14, 'in');
+    expect(Gpio).toHaveBeenCalledWith(14, '');
     expect(
       (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
     ).toHaveBeenCalledTimes(1);
@@ -58,7 +58,7 @@ describe('LightService', () => {
     expect(Gpio).not.toHaveBeenCalled();
     expect(lightService.read('tree')).toEqual(0);
     expect(Gpio).toHaveBeenCalledTimes(1);
-    expect(Gpio).toHaveBeenCalledWith(14, 'in');
+    expect(Gpio).toHaveBeenCalledWith(14, '');
     expect(
       (Gpio as jest.Mocked<any>).mock.instances[0].readSync,
     ).toHaveBeenCalledTimes(1);

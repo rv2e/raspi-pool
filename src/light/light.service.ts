@@ -21,7 +21,8 @@ export class LightService {
 
   public read(light: Light) {
     try {
-      const gpio = new Gpio(this.lights[light], 'in');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gpio = new Gpio(this.lights[light], '' as any);
       return gpio.readSync();
     } catch (error) {
       return 0;
