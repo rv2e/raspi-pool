@@ -29,11 +29,11 @@ export class MotorService {
     }
   }
 
-  public on(motor: Motor) {
+  public off(motor: Motor) {
     this.high(this.motors[motor]);
   }
 
-  public off(motor: Motor) {
+  public on(motor: Motor) {
     this.low(this.motors[motor]);
   }
 

@@ -23,16 +23,16 @@ describe('LightService', () => {
     await app.close();
   });
 
-  it('sets the light on', () => {
+  it('sets the light off', () => {
     expect(Gpio).not.toHaveBeenCalled();
-    expect(lightService.on('tree')).toBeUndefined();
+    expect(lightService.off('tree')).toBeUndefined();
     expect(Gpio).toHaveBeenCalledTimes(1);
     expect(Gpio).toHaveBeenCalledWith(14, 'high');
   });
 
-  it('sets the light off', () => {
+  it('sets the light on', () => {
     expect(Gpio).not.toHaveBeenCalled();
-    expect(lightService.off('tree')).toBeUndefined();
+    expect(lightService.on('tree')).toBeUndefined();
     expect(Gpio).toHaveBeenCalledTimes(1);
     expect(Gpio).toHaveBeenCalledWith(14, 'low');
   });

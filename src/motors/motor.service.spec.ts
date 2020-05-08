@@ -23,16 +23,16 @@ describe('MotorService', () => {
     await app.close();
   });
 
-  it('sets the motor on', () => {
+  it('sets the motor off', () => {
     expect(Gpio).not.toHaveBeenCalled();
-    expect(motorService.on('heating')).toBeUndefined();
+    expect(motorService.off('heating')).toBeUndefined();
     expect(Gpio).toHaveBeenCalledTimes(1);
     expect(Gpio).toHaveBeenCalledWith(29, 'high');
   });
 
-  it('sets the motor off', () => {
+  it('sets the motor on', () => {
     expect(Gpio).not.toHaveBeenCalled();
-    expect(motorService.off('heating')).toBeUndefined();
+    expect(motorService.on('heating')).toBeUndefined();
     expect(Gpio).toHaveBeenCalledTimes(1);
     expect(Gpio).toHaveBeenCalledWith(29, 'low');
   });

@@ -13,14 +13,14 @@ export class VerticalActuatorService {
     this.verticalActuators = this.config.get('verticalActuators');
   }
 
-  public up() {
+  public down() {
     this.verticalActuators.map(([left, right]) => {
       this.low(left);
       this.high(right);
     });
   }
 
-  public down() {
+  public up() {
     this.verticalActuators.map(([left, right]) => {
       this.high(left);
       this.low(right);
@@ -29,8 +29,8 @@ export class VerticalActuatorService {
 
   public stop() {
     this.verticalActuators.map(([left, right]) => {
-      this.high(left);
-      this.high(right);
+      this.low(left);
+      this.low(right);
     });
   }
 

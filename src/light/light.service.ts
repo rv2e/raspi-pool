@@ -29,11 +29,11 @@ export class LightService {
     }
   }
 
-  public on(light: Light) {
+  public off(light: Light) {
     this.high(this.lights[light]);
   }
 
-  public off(light: Light) {
+  public on(light: Light) {
     this.low(this.lights[light]);
   }
 
