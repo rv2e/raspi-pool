@@ -105,8 +105,8 @@ describe('Dashboard Controller', () => {
                   <h5 class=\\"card-title\\">Light Controller</h5>
                   <p class=\\"card-text\\">Puts the lights on and off.</p>
                     <div>
-                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('pool-light')\\" id=\\"pool-light\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Pool on\\" data-off=\\"Pool off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
-                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('tree-light')\\" id=\\"tree-light\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Tree on\\" data-off=\\"Tree off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('pool-light')\\" id=\\"pool-light\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Pool on\\" data-off=\\"Pool off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('tree-light')\\" id=\\"tree-light\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Tree on\\" data-off=\\"Tree off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
                     </div>
                 </div>
               </div>
@@ -131,8 +131,8 @@ describe('Dashboard Controller', () => {
                   <h5 class=\\"card-title\\">Pump Controller</h5>
                   <p class=\\"card-text\\">Start and stop the pumps.</p>
                     <div>
-                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('water-motor')\\" id=\\"water-motor\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Water on\\" data-off=\\"Water off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
-                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('heating-motor')\\" id=\\"heating-motor\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Heating on\\" data-off=\\"Heating off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('water-motor')\\" id=\\"water-motor\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Water on\\" data-off=\\"Water off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('heating-motor')\\" id=\\"heating-motor\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Heating on\\" data-off=\\"Heating off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
                     </div>
                 </div>
               </div>

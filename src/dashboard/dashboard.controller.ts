@@ -60,9 +60,16 @@ export class DashboardController {
   @Get('/status')
   @Render('dashboard')
   public async renderDashboard() {
-    const outsideTemperatureEntities = await this.outsideTemperatureService.getLastWeekMetrics();
-    const waterTemperatureEntities = await this.waterTemperatureService.getLastWeekMetrics();
-    const boxTemperatureEntities = await this.boxTemperatureService.getLastWeekMetrics();
+    const [
+      outsideTemperatureEntities,
+      waterTemperatureEntities,
+      boxTemperatureEntities,
+    ] = await Promise.all([
+      this.outsideTemperatureService.getLastWeekMetrics(),
+      this.waterTemperatureService.getLastWeekMetrics(),
+      this.boxTemperatureService.getLastWeekMetrics(),
+    ]);
+
     const motorStatus = {
       heating: this.motorService.read('heating'),
       water: this.motorService.read('water'),
