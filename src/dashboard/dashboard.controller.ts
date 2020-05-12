@@ -32,20 +32,20 @@ export class DashboardController {
     switch (body.id) {
       case 'pool-light':
         return body.checked
-          ? this.lightService.on('pool')
-          : this.lightService.off('pool');
+          ? this.lightService.off('pool')
+          : this.lightService.on('pool');
       case 'tree-light':
         return body.checked
-          ? this.lightService.on('tree')
-          : this.lightService.off('tree');
+          ? this.lightService.off('tree')
+          : this.lightService.on('tree');
       case 'water-motor':
         return body.checked
-          ? this.motorService.on('water')
-          : this.motorService.off('water');
+          ? this.motorService.off('water')
+          : this.motorService.on('water');
       case 'heating-motor':
         return body.checked
-          ? this.motorService.on('heating')
-          : this.motorService.off('heating');
+          ? this.motorService.off('heating')
+          : this.motorService.on('heating');
       case 'actuator-up':
         return this.verticalActuatorService.up();
       case 'actuator-down':
