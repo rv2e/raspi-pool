@@ -6,6 +6,7 @@ import { TemperatureModule } from 'temperature/temperature.module';
 import { LightModule } from 'light/light.module';
 import { VerticalActuatorModule } from 'vertical-actuator/vertical-actuator.module';
 import { MotorModule } from 'motors/motor.module';
+import { CronModule } from 'cron/cron.module';
 
 @Module({
   controllers: [DashboardController],
@@ -16,6 +17,7 @@ import { MotorModule } from 'motors/motor.module';
     LightModule,
     MotorModule,
     VerticalActuatorModule,
+    CronModule,
   ],
   providers: [],
 })

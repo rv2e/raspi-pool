@@ -14,6 +14,7 @@ import { LightService } from 'light/light.service';
 import { MotorService } from 'motors/motor.service';
 import { PutSensorDto } from './dashboard.dto';
 import { VerticalActuatorService } from 'vertical-actuator/vertical-actuator.service';
+import { SmartSystemService } from 'cron/smart-system.service';
 
 @Controller('/')
 export class DashboardController {
@@ -25,6 +26,7 @@ export class DashboardController {
     private readonly lightService: LightService,
     private readonly motorService: MotorService,
     private readonly verticalActuatorService: VerticalActuatorService,
+    private readonly smartSystemService: SmartSystemService,
   ) {}
 
   @Put('/api/sensor')
@@ -46,6 +48,13 @@ export class DashboardController {
         return body.checked
           ? this.motorService.on('heating')
           : this.motorService.off('heating');
+      case 'smart-system':
+        if (body.checked) {
+          this.smartSystemService.enableSmartSystem = true;
+        } else {
+          this.smartSystemService.enableSmartSystem = false;
+        }
+        return;
       case 'actuator-up':
         return this.verticalActuatorService.up();
       case 'actuator-down':
@@ -81,6 +90,7 @@ export class DashboardController {
     return {
       lightStatus,
       motorStatus,
+      enableSmartSystem: this.smartSystemService.enableSmartSystem,
       lastBoxTemperature: boxTemperatureEntities.slice(-1)[0],
       lastWaterTemperature: waterTemperatureEntities.slice(-1)[0],
       lastOutsideTemperature: outsideTemperatureEntities.slice(-1)[0],

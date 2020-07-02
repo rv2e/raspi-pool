@@ -133,6 +133,7 @@ describe('Dashboard Controller', () => {
                     <div>
                       <div class=\\"m-1\\"><input onchange=\\"updateSensor('water-motor')\\" id=\\"water-motor\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Water on\\" data-off=\\"Water off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
                       <div class=\\"m-1\\"><input onchange=\\"updateSensor('heating-motor')\\" id=\\"heating-motor\\" type=\\"checkbox\\" checked data-toggle=\\"toggle\\" data-on=\\"Heating on\\" data-off=\\"Heating off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
+                      <div class=\\"m-1\\"><input onchange=\\"updateSensor('smart-system')\\" id=\\"smart-system\\" type=\\"checkbox\\"  data-toggle=\\"toggle\\" data-on=\\"Smart System on\\" data-off=\\"Smart System off\\" data-onstyle=\\"success\\" data-offstyle=\\"info\\"></div>
                     </div>
                 </div>
               </div>
