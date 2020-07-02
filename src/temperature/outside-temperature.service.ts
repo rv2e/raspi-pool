@@ -17,7 +17,7 @@ export class OutsideTemperatureService {
     private readonly config: ConfigService,
   ) {}
 
-  public async getLastWeekMetrics() {
+  public async getLastWeekMetrics(limit = 3000) {
     return this.temperatureRepository.find({
       where: {
         createdAt: Raw(
@@ -25,6 +25,7 @@ export class OutsideTemperatureService {
         ),
       },
       order: { createdAt: 'ASC' },
+      take: limit,
     });
   }
 
